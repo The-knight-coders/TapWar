@@ -27,6 +27,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private GoogleSignInOptions gso;
     private TextView logOutButton ,randomButton,inviteButton;
     private AppCompatButton signInButton;
+    private View view2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +42,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         randomButton = findViewById(R.id.randomButton);
         inviteButton = findViewById(R.id.inviteButton);
         signInButton = findViewById(R.id.signInButton);
+        view2 = findViewById(R.id.view2);
         logOutButton.setOnClickListener(this);
         signInButton.setOnClickListener(this);
         inviteButton.setOnClickListener(this);
@@ -62,10 +64,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(account!=null){
             signInButton.setVisibility(View.INVISIBLE);
             logOutButton.setVisibility(View.VISIBLE);
+            view2.setVisibility(View.VISIBLE);
         }else{
 
             signInButton.setVisibility(View.VISIBLE);
-            logOutButton.setVisibility(View.INVISIBLE);
+            logOutButton.setVisibility(View.GONE);
+            view2.setVisibility(View.GONE);
         }
     }
 
@@ -85,7 +89,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     public void onComplete(@NonNull Task<Void> task) {
 //                        finish();
                         signInButton.setVisibility(View.VISIBLE);
-                        logOutButton.setVisibility(View.INVISIBLE);
+                        logOutButton.setVisibility(View.GONE);
+                        view2.setVisibility(View.GONE);
                         Toast.makeText(LoginActivity.this, "Signout complete", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -119,6 +124,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 signInButton.setVisibility(View.INVISIBLE);
                 logOutButton.setVisibility(View.VISIBLE);
+                view2.setVisibility(View.VISIBLE);
 
 
             }

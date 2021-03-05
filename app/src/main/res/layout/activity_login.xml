@@ -23,37 +23,63 @@
         android:textColor="@color/text_color"
         android:drawableTint="@color/text_color"/>
 
-    <TextView
-        android:id="@+id/logOutButton"
+
+
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Logout"
-        android:textSize="30dp"
-        android:layout_margin="25dp"
-        android:fontFamily="@font/fredoka_one"
-        android:visibility="invisible"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"/>
+        android:layout_centerInParent="true">
+        <TextView
+            android:id="@+id/inviteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Invite Friend"
+            android:textSize="30dp"
+            android:layout_margin="10dp"
+            android:fontFamily="@font/fredoka_one"
+            android:layout_centerHorizontal="true"/>
 
-    <TextView
-        android:id="@+id/inviteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Invite Friend"
-        android:textSize="30dp"
-        android:layout_margin="10dp"
-        android:fontFamily="@font/fredoka_one"
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/text_color"
+            android:layout_below="@+id/inviteButton"
+            android:layout_marginVertical="10dp"
+            android:layout_marginHorizontal="40dp"/>
 
-        android:layout_centerInParent="true"/>
-    <TextView
-        android:id="@+id/randomButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Play with world"
-        android:layout_above="@id/inviteButton"
-        android:textSize="30dp"
-        android:layout_margin="10dp"
-        android:fontFamily="@font/fredoka_one"
+        <TextView
+            android:id="@+id/randomButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play with world"
+            android:layout_below="@id/view"
+            android:textSize="30dp"
+            android:layout_margin="10dp"
+            android:fontFamily="@font/fredoka_one"
 
-        android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true"/>
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/text_color"
+            android:layout_below="@+id/randomButton"
+            android:layout_marginVertical="10dp"
+
+            android:layout_marginHorizontal="40dp"/>
+
+        <TextView
+            android:id="@+id/logOutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Logout"
+            android:textSize="30dp"
+            android:layout_margin="10dp"
+            android:fontFamily="@font/fredoka_one"
+
+            android:layout_below="@id/view2"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
 </RelativeLayout>
