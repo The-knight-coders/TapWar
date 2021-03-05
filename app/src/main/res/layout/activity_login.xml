@@ -8,6 +8,7 @@
     android:fitsSystemWindows="true"
     android:background="@color/theme_background">
 
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/signInButton"
         android:layout_width="wrap_content"
@@ -37,6 +38,7 @@
             android:textSize="30dp"
             android:layout_margin="10dp"
             android:fontFamily="@font/fredoka_one"
+            android:textColor="@color/text_color"
             android:layout_centerHorizontal="true"/>
 
         <View
@@ -56,8 +58,30 @@
             android:layout_below="@id/view"
             android:textSize="30dp"
             android:layout_margin="10dp"
+            android:textColor="@color/text_color"
             android:fontFamily="@font/fredoka_one"
 
+            android:layout_centerInParent="true"/>
+
+        <View
+            android:id="@+id/view3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/text_color"
+            android:layout_below="@+id/randomButton"
+            android:layout_marginVertical="10dp"
+            android:layout_marginHorizontal="40dp"/>
+
+        <TextView
+            android:id="@+id/leaderboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Leaderboard"
+            android:textSize="30dp"
+            android:layout_margin="10dp"
+            android:fontFamily="@font/fredoka_one"
+            android:textColor="@color/text_color"
+            android:layout_below="@id/view3"
             android:layout_centerInParent="true"/>
 
         <View
@@ -65,9 +89,8 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/text_color"
-            android:layout_below="@+id/randomButton"
+            android:layout_below="@+id/leaderboard"
             android:layout_marginVertical="10dp"
-
             android:layout_marginHorizontal="40dp"/>
 
         <TextView
@@ -78,8 +101,9 @@
             android:textSize="30dp"
             android:layout_margin="10dp"
             android:fontFamily="@font/fredoka_one"
-
+            android:textColor="@color/text_color"
             android:layout_below="@id/view2"
             android:layout_centerInParent="true"/>
+
     </RelativeLayout>
 </RelativeLayout>
