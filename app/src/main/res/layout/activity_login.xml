@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity"
+    android:fitsSystemWindows="true"
+    android:background="@color/theme_background">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/signInButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:text="@string/google_sign_up"
+        android:background="@drawable/googlebutton"
+        android:paddingHorizontal="16dp"
+        android:drawableLeft="@drawable/ic_baseline_person_24"
+        android:drawablePadding="4dp"
+        android:textColor="@color/text_color"
+        android:drawableTint="@color/text_color"/>
+
+    <TextView
+        android:id="@+id/logOutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:textSize="30dp"
+        android:layout_margin="25dp"
+        android:fontFamily="@font/fredoka_one"
+        android:visibility="invisible"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"/>
+
+    <TextView
+        android:id="@+id/inviteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Invite Friend"
+        android:textSize="30dp"
+        android:layout_margin="10dp"
+        android:fontFamily="@font/fredoka_one"
+
+        android:layout_centerInParent="true"/>
+    <TextView
+        android:id="@+id/randomButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play with world"
+        android:layout_above="@id/inviteButton"
+        android:textSize="30dp"
+        android:layout_margin="10dp"
+        android:fontFamily="@font/fredoka_one"
+
+        android:layout_centerInParent="true"/>
+</RelativeLayout>
