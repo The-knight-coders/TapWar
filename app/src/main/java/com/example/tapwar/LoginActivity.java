@@ -36,6 +36,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .requestEmail()
                 .build();
 
+
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         logOutButton = findViewById(R.id.logOutButton);
