@@ -33,6 +33,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestIdToken()
                 .requestEmail()
                 .build();
 
@@ -127,14 +128,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 logOutButton.setVisibility(View.VISIBLE);
                 view2.setVisibility(View.VISIBLE);
 
-
+            } else {
+                Log.d(TAG, "handleSignInResult: account is null");
             }
             // Signed in successfully, show authenticated UI.
             updateUI(account);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            e.printStackTrace();
+            Log.w(TAG, "signInResult:failed code=" + e.getMessage());
             updateUI(null);
         }
     }
