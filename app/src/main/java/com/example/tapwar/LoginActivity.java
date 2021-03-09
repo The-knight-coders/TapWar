@@ -19,6 +19,16 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "LoginActivity" ;
@@ -28,6 +38,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextView logOutButton ,randomButton,inviteButton;
     private AppCompatButton signInButton;
     private View view2;
+    private WebSocket webSocket;
+    private final String SERVER_PATH = "ws://192.168.0.108:3000";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,6 +141,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 logOutButton.setVisibility(View.VISIBLE);
                 view2.setVisibility(View.VISIBLE);
 
+//                initiateSocketConnection();
+
             } else {
                 Log.d(TAG, "handleSignInResult: account is null");
             }
@@ -176,5 +191,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }else{
             Toast.makeText(this, "Invite send", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void initiateSocketConnection() {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().url(SERVER_PATH).build();
+        webSocket = client.newWebSocket(request,new SocketListner());
+    }
+
+
+    private class SocketListner extends WebSocketListener {
+        @Override
+        public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
+            super.onMessage(webSocket, text);
+
+        }
+
+        @Override
+        public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
+            super.onOpen(webSocket, response);
+            runOnUiThread(() ->{
+                Toast.makeText(LoginActivity.this, "Socket Connection Successful", Toast.LENGTH_SHORT).show();
+
+            });
+        }
+
+
     }
 }
