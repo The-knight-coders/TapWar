@@ -11,24 +11,20 @@ const server = http.createServer((req, res) => {
 })
 var port = process.env.PORT || 3000;
 server.listen(port, () => {
-
     console.log("Listening on port " + port + "...")
 })
 
 wsServer = new SocketServer({ httpServer: server })
 const connections_map = {};
-const games= {};
+const games = {};
 
-function get_connection_username(connection)
-{
-	for(var user_id in connections_map)
-	{
-		if(connections_map[user_id] == connection)     
-		{
-			return user_id;
-		}
-	}
-	console.log("Not found username");
+function get_connection_username(connection) {
+    for (var user_id in connections_map) {
+        if (connections_map[user_id] == connection) {
+            return user_id;
+        }
+    }
+    console.log("Not found username");
 }
 
 wsServer.on('request', (req) => {
@@ -43,38 +39,35 @@ wsServer.on('request', (req) => {
 
         var obj = JSON.parse(mes.utf8Data);
         if (obj.type == 'login') {
-        	const username=obj['user_name'];
-        	connections_map[username]=connection;
-        	connection["player_username"] = username;
-        	connection.sendUTF("login_success");
-        }
-        else if(obj.type=="create_game"){
+            const username = obj['user_name'];
+            connections_map[username] = connection;
+            connection["player_username"] = username;
+            connection.sendUTF("login_success");
+        } else if (obj.type == "create_game") {
             var game_id = uniqid();
             games[game_id] = {
-            	"game_id": game_id,
-            	"player_1": get_connection_username(connection),        
-            	"player_2" : undefined
+                "game_id": game_id,
+                "player_1": get_connection_username(connection),
+                "player_2": undefined
             };
 
             connection.sendUTF(game_id);
             console.log(games);
-        }
-        else if(obj.type=="join_game"){
-        	const req_game_id=obj.game_id;
+        } else if (obj.type == "join_game") {
+            const req_game_id = obj.game_id;
 
-        	if(req_game_id in games){
-        		games[req_game_id].player_2=get_connection_username(connection); 
-        		console.log(games);
+            if (req_game_id in games) {
+                games[req_game_id].player_2 = get_connection_username(connection);
+                console.log(games);
 
-        		connection.sendUTF("yes");
+                connection.sendUTF("yes");
 
-        		connections_map[games[req_game_id].player_1].sendUTF("User_is_connected");
-        	}else{
-        		connection.sendUTF("no");
-        	}
+                connections_map[games[req_game_id].player_1].sendUTF("User_is_connected");
+            } else {
+                connection.sendUTF("no");
+            }
 
-        } 
-        else {
+        } else {
             console.log('No Request found');
         }
 
@@ -82,7 +75,6 @@ wsServer.on('request', (req) => {
 
     connection.on('close', (resCode, des) => {
         console.log('connection closed')
-        // connections.splice(connections.indexOf(connection), 1)
+        connections.splice(connections.indexOf(connection), 1)
     })
 })
-

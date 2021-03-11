@@ -21,6 +21,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.json.JSONObject;
+
+import java.util.Base64;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -38,19 +42,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private AppCompatButton signInButton;
     private View view2;
     private WebSocket webSocket;
-    private final String SERVER_PATH = "ws://192.168.0.108:3000";
+    private final String SERVER_PATH = "ws://192.168.1.6:3000";
     private PopUpClass popUpClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        loadUI();
+        signIn();
+    }
+
+    private void loadUI() {
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
 //                .requestIdToken()
                 .requestEmail()
                 .build();
-
-
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         logOutButton = findViewById(R.id.logOutButton);
@@ -63,7 +70,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         createRoomButton.setOnClickListener(this);
         randomButton.setOnClickListener(this);
 
-        signIn();
+        initiateSocketConnection();
     }
 
     @Override
@@ -200,6 +207,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(SERVER_PATH).build();
         webSocket = client.newWebSocket(request,new SocketListner());
+
     }
 
 
@@ -208,6 +216,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
             super.onMessage(webSocket, text);
 
+            Log.d(TAG, "onMessage: " + text);
         }
 
         @Override
@@ -215,11 +224,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             super.onOpen(webSocket, response);
             runOnUiThread(() ->{
                 Toast.makeText(LoginActivity.this, "Socket Connection Successful", Toast.LENGTH_SHORT).show();
-
             });
         }
 
+        @Override
+        public void onClosed(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
+            super.onClosed(webSocket, code, reason);
+        }
 
+        @Override
+        public void onClosing(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
+            super.onClosing(webSocket, code, reason);
+        }
+
+        @Override
+        public void onFailure(@NotNull WebSocket webSocket, @NotNull Throwable t, @Nullable Response response) {
+            super.onFailure(webSocket, t, response);
+            Log.d(TAG, "onFailure: " + t.getMessage());
+        }
     }
 }
 
