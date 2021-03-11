@@ -3,6 +3,7 @@ package com.example.tapwar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -11,13 +12,18 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import static androidx.core.content.ContextCompat.startActivity;
 
 
-public class PopUpClass {
+public abstract class PopUpClass {
 
+    public TextView roomCodeTextView;
+    public Button shareButton;
+
+    public abstract void onPopup();
     //PopupWindow display method
     public void showPopupWindow(final View view,Context c) {
 
@@ -25,6 +31,11 @@ public class PopUpClass {
         //Create a View object yourself through inflater
         LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.create_room_popup, null);
+
+        roomCodeTextView = popupView.findViewById(R.id.roomIdTextView);
+        shareButton = popupView.findViewById(R.id.shareButton);
+
+
         popupView.setFitsSystemWindows(true);
         //Specify the length and width through constants
         int width = LinearLayout.LayoutParams.MATCH_PARENT;
@@ -46,30 +57,6 @@ public class PopUpClass {
 
 //        TextView test2 = popupView.findViewById(R.id.titleText);
 //        test2.setText(R.string.textTitle);
-
-        Button shareButton = popupView.findViewById(R.id.shareButton);
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /**
-                 * After the code is generated we can simply pass the game code here
-                 */
-                String message = " Hey Welcome to Tap war \n To join Out game Copy The Code : txxgjshg121";
-                Intent i = new Intent();
-                i.setAction(Intent.ACTION_SEND);
-                i.setType("text/plain");
-
-                i.putExtra(android.content.Intent.EXTRA_SUBJECT, "Joining Code");
-                i.putExtra(android.content.Intent.EXTRA_TEXT, message);
-                c.startActivity(Intent.createChooser(i,"Share"));
-
-                //As an example, display the message
-                Toast.makeText(view.getContext(), "Wow, share action button", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
 
         Button cancelRoomButton = popupView.findViewById(R.id.cancelRoomButton);
         cancelRoomButton.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +95,11 @@ public class PopUpClass {
         p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         p.dimAmount = 0.6f;
         wm.updateViewLayout(container, p);
+    }
+
+    public void setRoomCode(String roomcode) {
+        Log.d("POPUP", "setRoomCode: " + roomcode);
+        roomCodeTextView.setText(roomcode);
     }
 
 }

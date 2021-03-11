@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tapwar.classes.ServerResponseBody;
 import com.example.tapwar.classes.UserDetail;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -19,9 +20,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.JsonObject;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Base64;
@@ -44,7 +47,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private WebSocket webSocket;
     private final String SERVER_PATH = "ws://192.168.1.6:3000";
     private PopUpClass popUpClass;
-
+    private GoogleSignInAccount googleSignInAccount;
+    private UserDetail userDetail = new UserDetail();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,7 +141,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
             if (acct != null) {
-                UserDetail userDetail = new UserDetail();
+                userDetail = new UserDetail();
                 userDetail.setPersonEmail(acct.getEmail());
                 userDetail.setPersonName(acct.getDisplayName());
                 userDetail.setPersonId(acct.getId());
@@ -195,11 +199,39 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(account==null){
             signIn();
         }else{
-            popUpClass = new PopUpClass();
+            popUpClass = new PopUpClass() {
+                @Override
+                public void onPopup() {
+                    this.showPopupWindow(v,getParent());
+                    ServerResponseBody body = new ServerResponseBody(account.getEmail(), null, ServerResponseBody.REQUEST_CREATE_GAME);
+                    webSocket.send(body.toJson());
 
-            //Changes made here
-            popUpClass.showPopupWindow(v, this);
+                    shareButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
+                            /**
+                             * After the code is generated we can simply pass the game code here
+                             */
+                            String message = "Hey Welcome to Tap war \nTo join Out game Copy The Code : " + popUpClass.roomCodeTextView.getText().toString() ;
+                            Intent i = new Intent();
+                            i.setAction(Intent.ACTION_SEND);
+                            i.setType("text/plain");
+
+                            i.putExtra(android.content.Intent.EXTRA_SUBJECT, "Joining Code");
+                            i.putExtra(android.content.Intent.EXTRA_TEXT, message);
+                            startActivity(Intent.createChooser(i,"Share"));
+
+                            //As an example, display the message
+                            Toast.makeText(getApplicationContext(), "Wow, share action button", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+
+                }
+            };
+
+            popUpClass.onPopup();
         }
     }
 
@@ -208,6 +240,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Request request = new Request.Builder().url(SERVER_PATH).build();
         webSocket = client.newWebSocket(request,new SocketListner());
 
+        loginToServer();
+    }
+
+    private void loginToServer() {
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account != null) {
+            ServerResponseBody body = new ServerResponseBody(account.getEmail(), null, ServerResponseBody.REQUEST_LOGIN);
+            webSocket.send(body.toJson());
+        }
     }
 
 
@@ -215,8 +256,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         @Override
         public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
             super.onMessage(webSocket, text);
-
             Log.d(TAG, "onMessage: " + text);
+
+            try {
+                JSONObject jsonObject = new JSONObject(text);
+                if (jsonObject.has("game_id")) {
+                    if (popUpClass != null) {
+                        popUpClass.setRoomCode(jsonObject.get("game_id").toString());
+                    } else {
+                        Log.d(TAG, "onMessage: It is null " );
+                    }
+                } else {
+                    Log.d(TAG, "onMessage: Not present");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override

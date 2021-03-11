@@ -51,7 +51,10 @@ wsServer.on('request', (req) => {
                 "player_2": undefined
             };
 
-            connection.sendUTF(game_id);
+            let message = {
+                'game_id': game_id
+            }
+            connection.sendUTF(JSON.stringify(message));
             console.log(games);
         } else if (obj.type == "join_game") {
             const req_game_id = obj.game_id;
@@ -75,6 +78,6 @@ wsServer.on('request', (req) => {
 
     connection.on('close', (resCode, des) => {
         console.log('connection closed')
-        connections.splice(connections.indexOf(connection), 1)
+            // connections.splice(connections.indexOf(connection))
     })
 })

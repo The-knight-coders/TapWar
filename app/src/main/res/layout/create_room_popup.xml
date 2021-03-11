@@ -39,10 +39,11 @@
                     android:textSize="16dp"
                     android:fontFamily="@font/fredoka_one"/>
                 <TextView
+                    android:id="@+id/roomIdTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="GTBIT2018"
-                    android:textSize="40dp"
+                    android:text="Room Code"
+                    android:textSize="20dp"
                     android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:fontFamily="@font/fredoka_one"/>

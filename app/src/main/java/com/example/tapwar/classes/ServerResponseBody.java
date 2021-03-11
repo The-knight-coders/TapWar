@@ -50,7 +50,7 @@ public class ServerResponseBody {
 		return game_id;
 	}
 
-	public String toJson(int reqCode) {
+	public String toJson() {
 		return new GsonBuilder().create().toJson(this, ServerResponseBody.class);
 	}
 
