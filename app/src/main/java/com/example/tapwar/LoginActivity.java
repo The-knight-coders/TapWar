@@ -189,7 +189,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             signIn();
         }else{
             popUpClass = new PopUpClass();
-            popUpClass.showPopupWindow(v);
+
+            //Changes made here
+            popUpClass.showPopupWindow(v, this);
 
         }
     }

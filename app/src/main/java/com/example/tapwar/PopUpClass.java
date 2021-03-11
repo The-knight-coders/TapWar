@@ -1,8 +1,7 @@
 package com.example.tapwar;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.content.Intent;
 import android.os.Build;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -12,17 +11,15 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import static android.content.Context.WINDOW_SERVICE;
-import static androidx.core.content.ContextCompat.getSystemService;
+import static androidx.core.content.ContextCompat.startActivity;
+
 
 public class PopUpClass {
 
     //PopupWindow display method
-
-    public void showPopupWindow(final View view) {
+    public void showPopupWindow(final View view,Context c) {
 
 
         //Create a View object yourself through inflater
@@ -54,6 +51,18 @@ public class PopUpClass {
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                /**
+                 * After the code is generated we can simply pass the game code here
+                 */
+                String message = " Hey Welcome to Tap war \n To join Out game Copy The Code : txxgjshg121";
+                Intent i = new Intent();
+                i.setAction(Intent.ACTION_SEND);
+                i.setType("text/plain");
+
+                i.putExtra(android.content.Intent.EXTRA_SUBJECT, "Joining Code");
+                i.putExtra(android.content.Intent.EXTRA_TEXT, message);
+                c.startActivity(Intent.createChooser(i,"Share"));
 
                 //As an example, display the message
                 Toast.makeText(view.getContext(), "Wow, share action button", Toast.LENGTH_SHORT).show();
@@ -93,12 +102,12 @@ public class PopUpClass {
             }
         }
         Context context = popupWindow.getContentView().getContext();
+
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
         p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         p.dimAmount = 0.6f;
         wm.updateViewLayout(container, p);
     }
-
 
 }
