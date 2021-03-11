@@ -2,11 +2,10 @@ package com.example.tapwar.classes;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class ServerResponseBody {
+
 	public static final int REQUEST_LOGIN = 1;
 	public static final int REQUEST_CREATE_GAME = 2;
 	public static final int REQUEST_JOIN_GAME = 3;
@@ -25,11 +24,11 @@ public class ServerResponseBody {
 		findType(reqCode);
 	}
 	private void findType(int reqCode) {
-		if (reqCode == 1) {
+		if (reqCode == REQUEST_LOGIN) {
 			this.type =  LOGIN;
-		} else if (reqCode == 2) {
+		} else if (reqCode == REQUEST_CREATE_GAME) {
 			this.type =  CREATE_GAME;
-		} else if (reqCode == 3) {
+		} else if (reqCode == REQUEST_JOIN_GAME) {
 			this.type =  JOIN_GAME;
 		} else {
 			this.type = null;
@@ -53,9 +52,7 @@ public class ServerResponseBody {
 	}
 
 	public static ServerResponseBody toObject(String json) {
-		Gson gson = new GsonBuilder().create();
-		ServerResponseBody body= gson.fromJson(json, ServerResponseBody.class);
-		return body;
+		return new GsonBuilder().create().fromJson(json, ServerResponseBody.class);
 	}
 
 	@Override
