@@ -81,7 +81,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             logOutButton.setVisibility(View.VISIBLE);
             view2.setVisibility(View.VISIBLE);
         }else{
-
             signInButton.setVisibility(View.VISIBLE);
             logOutButton.setVisibility(View.GONE);
             view2.setVisibility(View.GONE);

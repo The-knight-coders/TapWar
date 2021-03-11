@@ -8,5 +8,9 @@
     "start": "node projectServer"
   },
   "author": "Shubham Nirbhay Taniya Sayam",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "sockets": "^0.4.2",
+    "uniqid": "^5.3.0"
+  }
 }
