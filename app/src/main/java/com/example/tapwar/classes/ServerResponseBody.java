@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.gson.GsonBuilder;
 
+/**
+ * Object for converting object to json and vice-versa
+ */
 public class ServerResponseBody {
 
 	public static final int REQUEST_LOGIN = 1;

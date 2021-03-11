@@ -52,9 +52,8 @@ public class UserDetail {
     }
 
     public static UserDetail toObject(String json) {
-        Gson gson = new GsonBuilder().create();
-        UserDetail user= gson.fromJson(json, UserDetail.class);
-        return user;
+
+        return new GsonBuilder().create().fromJson(json, UserDetail.class);
     }
 
     @Override
