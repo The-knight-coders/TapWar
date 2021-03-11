@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tapwar.classes.UserDetail;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -19,20 +20,33 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import org.jetbrains.annotations.NotNull;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "LoginActivity" ;
     private GoogleSignInClient mGoogleSignInClient;
     private static int RC_SIGN_IN = 100;
     private GoogleSignInOptions gso;
-    private TextView logOutButton ,randomButton,inviteButton;
+    private TextView logOutButton ,randomButton,createRoomButton;
     private AppCompatButton signInButton;
     private View view2;
+    private WebSocket webSocket;
+    private final String SERVER_PATH = "ws://192.168.0.108:3000";
+    private PopUpClass popUpClass;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestIdToken()
                 .requestEmail()
                 .build();
 
@@ -41,12 +55,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         logOutButton = findViewById(R.id.logOutButton);
         randomButton = findViewById(R.id.randomButton);
-        inviteButton = findViewById(R.id.inviteButton);
+        createRoomButton = findViewById(R.id.createRoomButton);
         signInButton = findViewById(R.id.signInButton);
         view2 = findViewById(R.id.view2);
         logOutButton.setOnClickListener(this);
         signInButton.setOnClickListener(this);
-        inviteButton.setOnClickListener(this);
+        createRoomButton.setOnClickListener(this);
         randomButton.setOnClickListener(this);
 
         signIn();
@@ -67,7 +81,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             logOutButton.setVisibility(View.VISIBLE);
             view2.setVisibility(View.VISIBLE);
         }else{
-
             signInButton.setVisibility(View.VISIBLE);
             logOutButton.setVisibility(View.GONE);
             view2.setVisibility(View.GONE);
@@ -127,14 +140,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 logOutButton.setVisibility(View.VISIBLE);
                 view2.setVisibility(View.VISIBLE);
 
+//                initiateSocketConnection();
 
+            } else {
+                Log.d(TAG, "handleSignInResult: account is null");
             }
             // Signed in successfully, show authenticated UI.
             updateUI(account);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            e.printStackTrace();
+            Log.w(TAG, "signInResult:failed code=" + e.getMessage());
             updateUI(null);
         }
     }
@@ -148,8 +165,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.signInButton:
                 signIn();
                 break;
-            case R.id.inviteButton:
-                inviteFriend();
+            case R.id.createRoomButton:
+                createRoom(v);
                 break;
             case R.id.randomButton:
                 randomPlay();
@@ -166,12 +183,58 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void inviteFriend() {
+    private void createRoom(View v) {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if(account==null){
             signIn();
         }else{
-            Toast.makeText(this, "Invite send", Toast.LENGTH_SHORT).show();
+            popUpClass = new PopUpClass();
+            popUpClass.showPopupWindow(v);
+
         }
     }
+
+    private void initiateSocketConnection() {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().url(SERVER_PATH).build();
+        webSocket = client.newWebSocket(request,new SocketListner());
+    }
+
+
+    private class SocketListner extends WebSocketListener {
+        @Override
+        public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
+            super.onMessage(webSocket, text);
+
+        }
+
+        @Override
+        public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
+            super.onOpen(webSocket, response);
+            runOnUiThread(() ->{
+                Toast.makeText(LoginActivity.this, "Socket Connection Successful", Toast.LENGTH_SHORT).show();
+
+            });
+        }
+
+
+    }
 }
+
+/**
+ * public static final MediaType JSON
+ *     = MediaType.parse("application/json; charset=utf-8");
+ *
+ * OkHttpClient client = new OkHttpClient();
+ *
+ * String post(String url, String json) throws IOException {
+ *   RequestBody body = RequestBody.create(JSON, json); // new
+ *   // RequestBody body = RequestBody.create(JSON, json); // old
+ *   Request request = new Request.Builder()
+ *       .url(url)
+ *       .post(body)
+ *       .build();
+ *   Response response = client.newCall(request).execute();
+ *   return response.body().string();
+ * }
+ **/

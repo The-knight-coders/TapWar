@@ -1,0 +1,16 @@
+{
+  "name": "project-server",
+  "version": "1.0.0",
+  "description": "Project server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node projectServer"
+  },
+  "author": "Shubham Nirbhay Taniya Sayam",
+  "license": "ISC",
+  "dependencies": {
+    "sockets": "^0.4.2",
+    "uniqid": "^5.3.0"
+  }
+}
