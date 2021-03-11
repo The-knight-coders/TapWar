@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tapwar.classes.UserDetail;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -20,8 +21,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -218,3 +217,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 }
+
+/**
+ * public static final MediaType JSON
+ *     = MediaType.parse("application/json; charset=utf-8");
+ *
+ * OkHttpClient client = new OkHttpClient();
+ *
+ * String post(String url, String json) throws IOException {
+ *   RequestBody body = RequestBody.create(JSON, json); // new
+ *   // RequestBody body = RequestBody.create(JSON, json); // old
+ *   Request request = new Request.Builder()
+ *       .url(url)
+ *       .post(body)
+ *       .build();
+ *   Response response = client.newCall(request).execute();
+ *   return response.body().string();
+ * }
+ **/
