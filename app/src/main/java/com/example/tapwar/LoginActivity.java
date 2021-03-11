@@ -35,11 +35,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private GoogleSignInClient mGoogleSignInClient;
     private static int RC_SIGN_IN = 100;
     private GoogleSignInOptions gso;
-    private TextView logOutButton ,randomButton,inviteButton;
+    private TextView logOutButton ,randomButton,createRoomButton;
     private AppCompatButton signInButton;
     private View view2;
     private WebSocket webSocket;
     private final String SERVER_PATH = "ws://192.168.0.108:3000";
+    private PopUpClass popUpClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +56,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         logOutButton = findViewById(R.id.logOutButton);
         randomButton = findViewById(R.id.randomButton);
-        inviteButton = findViewById(R.id.inviteButton);
+        createRoomButton = findViewById(R.id.createRoomButton);
         signInButton = findViewById(R.id.signInButton);
         view2 = findViewById(R.id.view2);
         logOutButton.setOnClickListener(this);
         signInButton.setOnClickListener(this);
-        inviteButton.setOnClickListener(this);
+        createRoomButton.setOnClickListener(this);
         randomButton.setOnClickListener(this);
 
         signIn();
@@ -165,8 +166,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.signInButton:
                 signIn();
                 break;
-            case R.id.inviteButton:
-                inviteFriend();
+            case R.id.createRoomButton:
+                createRoom(v);
                 break;
             case R.id.randomButton:
                 randomPlay();
@@ -183,12 +184,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void inviteFriend() {
+    private void createRoom(View v) {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if(account==null){
             signIn();
         }else{
-            Toast.makeText(this, "Invite send", Toast.LENGTH_SHORT).show();
+            popUpClass = new PopUpClass();
+            popUpClass.showPopupWindow(v);
+
         }
     }
 
