@@ -1,8 +1,15 @@
-package com.example.tapwar;
+package com.example.tapwar.classes;
 
 import android.net.Uri;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class UserDetail {
+
+
     private String personName;
     private String personEmail;
     private String personId;
@@ -38,5 +45,25 @@ public class UserDetail {
 
     public void setPersonPhoto(Uri personPhoto) {
         this.personPhoto = personPhoto;
+    }
+
+    public String toJson() {
+        return new GsonBuilder().create().toJson(this, UserDetail.class);
+    }
+
+    public static UserDetail toObject(String json) {
+        Gson gson = new GsonBuilder().create();
+        UserDetail user= gson.fromJson(json, UserDetail.class);
+        return user;
+    }
+
+    @Override
+    public String toString() {
+        return "UserDetail{" +
+                "personName='" + personName + '\'' +
+                ", personEmail='" + personEmail + '\'' +
+                ", personId='" + personId + '\'' +
+                ", personPhoto=" + personPhoto +
+                '}';
     }
 }
