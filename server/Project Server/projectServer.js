@@ -23,7 +23,7 @@ function get_connection_username(connection)
 {
 	for(var user_id in connections_map)
 	{
-		if(connections_map[user_id] == connection)
+		if(connections_map[user_id] == connection)     
 		{
 			return user_id;
 		}
@@ -52,7 +52,7 @@ wsServer.on('request', (req) => {
             var game_id = uniqid();
             games[game_id] = {
             	"game_id": game_id,
-            	"player_1": get_connection_username(connection),
+            	"player_1": get_connection_username(connection),        
             	"player_2" : undefined
             };
 
@@ -63,10 +63,12 @@ wsServer.on('request', (req) => {
         	const req_game_id=obj.game_id;
 
         	if(req_game_id in games){
-        		games[req_game_id].player_2=get_connection_username(connection);
+        		games[req_game_id].player_2=get_connection_username(connection); 
         		console.log(games);
 
         		connection.sendUTF("yes");
+
+        		connections_map[games[req_game_id].player_1].sendUTF("User_is_connected");
         	}else{
         		connection.sendUTF("no");
         	}
