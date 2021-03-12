@@ -288,15 +288,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
             super.onMessage(webSocket, text);
             Log.d(TAG, "onMessage: " + text);
-
             try {
                 JSONObject jsonObject = new JSONObject(text);
-                if (jsonObject.has("game_id")) {
-                    if (popUpCreateRoomClass != null) {
-                        popUpCreateRoomClass.setRoomCode(jsonObject.get("game_id").toString());
-                    } else {
-                        Log.d(TAG, "onMessage: It is null " );
-                    }
+
+                if(jsonObject.get("type").toString().equals("Create room") ){
+                     onCreateRoom(jsonObject);
+                }else if(jsonObject.get("type").toString().equals("Create room")){
+                    Log.d(TAG, "LOGIN SUCESSFULLY");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -325,6 +323,36 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         public void onFailure(@NotNull WebSocket webSocket, @NotNull Throwable t, @Nullable Response response) {
             super.onFailure(webSocket, t, response);
             Log.d(TAG, "onFailure: " + t.getMessage());
+        }
+    }
+
+    //when response came back after create popup window
+    private void onCreateRoom(JSONObject jsonObject){
+        JSONObject gameInfo = null;
+        try {
+            gameInfo = jsonObject.getJSONObject("game_info");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if(gameInfo.has("game_id")){
+            if (popUpCreateRoomClass != null) {
+                JSONObject finalGameInfo = gameInfo;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            popUpCreateRoomClass.setRoomCode( finalGameInfo.get("game_id").toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        // Stuff that updates the UI
+
+                    }
+                });
+
+            } else {
+                Log.d(TAG, "onMessage: It is null " );
+            }
         }
     }
 }

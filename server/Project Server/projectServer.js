@@ -32,6 +32,23 @@ wsServer.on('request', (req) => {
     console.log('new connection')
 
     // connections_map[username] = (connection)
+    let message = {
+        "type" : undefined,
+        "game_info" : {
+            "game_id" : undefined,
+            "player_1_info" : {
+                "name" : undefined,
+                "connection" : undefined
+            },
+            "player_2_info" : {
+                "name" : undefined,
+                "connection" : undefined
+            },
+            "game_status" : undefined  
+        },
+        "status" : undefined
+
+    }
 
     connection.on('message', (mes) => {
 
@@ -42,10 +59,11 @@ wsServer.on('request', (req) => {
             const username = obj['user_name'];
             connections_map[username] = connection;
             connection["player_username"] = username;
-            let message = {
-                'result': "login sucess"
-            }
+
+            message.type = "Login";
+            message.status = "Successfull";
             connection.sendUTF(JSON.stringify(message));
+            console.log("login successfull : " + username);
         } else if (obj.type == "create_game") {
             var game_id = uniqid();
             games[game_id] = {
@@ -54,23 +72,27 @@ wsServer.on('request', (req) => {
                 "player_2": undefined
             };
 
-            let message = {
-                'game_id': game_id
-            }
+            message.type = "Create room";
+            message.game_info.player_1_info.name = get_connection_username(connection);
+            message.game_info.player_1_info.connection = "connected";
+            message.game_info.game_id = game_id;
+            message.status = "Pending";
+
             connection.sendUTF(JSON.stringify(message));
-            console.log(games[game_id]);
+            console.log(games);
+            console.log(message);
         } else if (obj.type == "join_game") {
-            const req_game_id = obj.game_id; 
+            const req_game_id = obj.game_id;
 
             if (req_game_id in games) {
                 games[req_game_id].player_2 = get_connection_username(connection);
                 console.log(games);
 
-                connection.sendUTF("yes, you are now in game room");
+                connection.sendUTF("yes");
 
                 connections_map[games[req_game_id].player_1].sendUTF("User_is_connected");
             } else {
-                connection.sendUTF("no, wrong game room code");
+                connection.sendUTF("no");
             }
 
         } else {
@@ -81,6 +103,6 @@ wsServer.on('request', (req) => {
 
     connection.on('close', (resCode, des) => {
         console.log('connection closed')
-            // connections.splice(connections.indexOf(connection),1)
+            // connections.splice(connections.indexOf(connection))
     })
 })
