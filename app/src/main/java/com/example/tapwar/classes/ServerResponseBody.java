@@ -66,4 +66,5 @@ public class ServerResponseBody {
 				", game_id='" + game_id + '\'' +
 				'}';
 	}
+
 }

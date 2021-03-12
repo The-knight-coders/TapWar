@@ -43,8 +43,8 @@ wsServer.on('request', (req) => {
             connections_map[username] = connection;
             connection["player_username"] = username;
             let message = {
-                            'result': "login sucess"
-                        }
+                'result': "login sucess"
+            }
             connection.sendUTF(JSON.stringify(message));
         } else if (obj.type == "create_game") {
             var game_id = uniqid();
@@ -81,6 +81,6 @@ wsServer.on('request', (req) => {
 
     connection.on('close', (resCode, des) => {
         console.log('connection closed')
-            // connections.splice(connections.indexOf(connection))
+            // connections.splice(connections.indexOf(connection),1)
     })
 })
