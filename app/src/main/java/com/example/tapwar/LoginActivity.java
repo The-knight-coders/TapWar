@@ -1,15 +1,15 @@
 package com.example.tapwar;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 
 import com.example.tapwar.classes.ServerResponseBody;
 import com.example.tapwar.classes.UserDetail;
@@ -20,14 +20,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.gson.JsonObject;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Base64;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -45,9 +42,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private AppCompatButton signInButton;
     private View view2;
     private WebSocket webSocket;
-    private final String SERVER_PATH = "ws://192.168.1.6:3000";
-//            nir : "ws://192.168.1.6:3000";
-    private PopUpClass popUpClass;
+    private final String SERVER_PATH = "ws://192.168.0.108:3000";
+//            shubh : ""ws://192.168.0.108:3000"";
+    private PopUpCreateRoomClass popUpCreateRoomClass;
     private GoogleSignInAccount googleSignInAccount;
     private UserDetail userDetail = new UserDetail();
     @Override
@@ -211,11 +208,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(account==null){
             signIn();
         }else{
-            popUpClass = new PopUpClass() {
+            popUpCreateRoomClass = new PopUpCreateRoomClass() {
                 @Override
                 public void onClick(View view) {
                     if (view.getId() == R.id.shareButton) {
-                        String message = "Hey Welcome to Tap war \nTo join Out game Copy The Code : " + popUpClass.roomCodeTextView.getText().toString() ;
+                        String message = "Hey Welcome to Tap war \nTo join Out game Copy The Code : " + popUpCreateRoomClass.roomCodeTextView.getText().toString() ;
                         Intent i = new Intent();
                         i.setAction(Intent.ACTION_SEND);
                         i.setType("text/plain");
@@ -238,7 +235,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
             };
 
-            popUpClass.onPopup();
+            popUpCreateRoomClass.onPopup();
         }
     }
 
@@ -268,8 +265,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             try {
                 JSONObject jsonObject = new JSONObject(text);
                 if (jsonObject.has("game_id")) {
-                    if (popUpClass != null) {
-                        popUpClass.setRoomCode(jsonObject.get("game_id").toString());
+                    if (popUpCreateRoomClass != null) {
+                        popUpCreateRoomClass.setRoomCode(jsonObject.get("game_id").toString());
                     } else {
                         Log.d(TAG, "onMessage: It is null " );
                     }

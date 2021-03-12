@@ -14,7 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-public abstract class PopUpClass implements View.OnClickListener {
+public abstract class PopUpCreateRoomClass implements View.OnClickListener {
 
     protected TextView roomCodeTextView;
     protected Button shareButton;

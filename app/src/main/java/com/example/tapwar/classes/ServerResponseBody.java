@@ -2,6 +2,7 @@ package com.example.tapwar.classes;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.gson.GsonBuilder;
 
 /**
