@@ -294,7 +294,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 JSONObject jsonObject = new JSONObject(text);
                 String status = jsonObject.get("status").toString();
                 if(jsonObject.get("type").toString().equals("Create room") ){
-                     onCreateRoom(jsonObject.getJSONObject("game_info"));
+                     onCreateRoom(jsonObject.getJSONObject("game"));
                 }else if(jsonObject.get("type").toString().equals("Login")){
                     Log.d(TAG, "LOGIN SUCESSFULLY "  + status);
                 }else if(jsonObject.get("type").toString().equals("Cancel room")){
@@ -337,15 +337,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     //when response came back after create popup window
-    private void onCreateRoom(JSONObject gameInfo){
+    private void onCreateRoom(JSONObject game){
 
-        if(gameInfo.has("game_id")){
+        if(game.has("game_id")){
             if (popUpCreateRoomClass != null) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            popUpCreateRoomClass.setRoomCode( gameInfo.get("game_id").toString());
+                            popUpCreateRoomClass.setRoomCode( game.get("game_id").toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
