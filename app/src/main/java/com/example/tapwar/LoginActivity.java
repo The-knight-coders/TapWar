@@ -119,6 +119,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         signInButton.setVisibility(View.VISIBLE);
                         logOutButton.setVisibility(View.GONE);
                         view2.setVisibility(View.GONE);
+
+                        if (webSocket != null) {
+                            // todo implement logout
+                        }
                         Toast.makeText(LoginActivity.this, "Signout complete", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -155,6 +159,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 logOutButton.setVisibility(View.VISIBLE);
                 view2.setVisibility(View.VISIBLE);
 
+                loginToServer();
 //                initiateSocketConnection();
 
             } else {
@@ -241,7 +246,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Request request = new Request.Builder().url(SERVER_PATH).build();
         webSocket = client.newWebSocket(request,new SocketListner());
 
-        loginToServer();
+//        loginToServer();
     }
 
     private void loginToServer() {
@@ -267,8 +272,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     } else {
                         Log.d(TAG, "onMessage: It is null " );
                     }
-                } else {
-                    Log.d(TAG, "onMessage: Not present");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

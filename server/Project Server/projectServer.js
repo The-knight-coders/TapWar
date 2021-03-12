@@ -42,7 +42,10 @@ wsServer.on('request', (req) => {
             const username = obj['user_name'];
             connections_map[username] = connection;
             connection["player_username"] = username;
-            connection.sendUTF("login_success");
+            let message = {
+                            'result': "login sucess"
+                        }
+            connection.sendUTF(JSON.stringify(message));
         } else if (obj.type == "create_game") {
             var game_id = uniqid();
             games[game_id] = {
