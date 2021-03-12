@@ -2,33 +2,31 @@ package com.example.tapwar;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 import android.widget.Toast;
 
-
-public abstract class PopUpCreateRoomClass implements View.OnClickListener {
-
-    private TextView roomCodeTextView;
-    protected Button shareButton;
+public abstract class PopUpJoinRoomClass implements View.OnClickListener, TextWatcher {
     protected PopupWindow popupWindow;
-    protected Button cancelRoomButton;
-
+    protected EditText codeEditText;
+    protected Button enterRoomButton;
+    protected Button cancelJoinButton;
+    private String enteredCode;
     public abstract void onPopup();
 
-    //PopupWindow display method
-    public void showPopupWindow(final View view,Context c) {
+    public void showPopupWindow(final View view, Context c) {
 
         //Create a View object yourself through inflater
         LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.create_room_popup, null);
+        View popupView = inflater.inflate(R.layout.join_room_popup, null);
 
         popupView.setFitsSystemWindows(true);
         //Specify the length and width through constants
@@ -50,16 +48,12 @@ public abstract class PopUpCreateRoomClass implements View.OnClickListener {
         popupWindow.setAnimationStyle(R.style.Animation_Design_BottomSheetDialog);
         dimBehind(popupWindow);
 
-        roomCodeTextView = popupView.findViewById(R.id.roomIdTextView);
-        shareButton = popupView.findViewById(R.id.shareButton);
-        cancelRoomButton = popupView.findViewById(R.id.cancelRoomButton);
-        shareButton.setOnClickListener(this);
-        cancelRoomButton.setOnClickListener(this);
-    }
-
-    protected void dismissPopup(View v){
-        popupWindow.dismiss();
-        Toast.makeText(v.getContext(), "Wow, cancel action button", Toast.LENGTH_SHORT).show();
+        codeEditText = popupView.findViewById(R.id.codeEditText);
+        enterRoomButton = popupView.findViewById(R.id.enterRoomButton);
+        cancelJoinButton = popupView.findViewById(R.id.cancelJoinButton);
+        enterRoomButton.setOnClickListener(this);
+        cancelJoinButton.setOnClickListener(this);
+        codeEditText.addTextChangedListener(this);
     }
 
     private static void dimBehind(PopupWindow popupWindow) {
@@ -86,12 +80,43 @@ public abstract class PopUpCreateRoomClass implements View.OnClickListener {
         wm.updateViewLayout(container, p);
     }
 
-    public void setRoomCode(String roomcode) {
-        Log.d("POPUP", "setRoomCode: " + roomcode);
-        roomCodeTextView.setText(roomcode);
+    protected void dismissPopup(View v){
+        popupWindow.dismiss();
+        Toast.makeText(v.getContext(), "Wow, cancel action button", Toast.LENGTH_SHORT).show();
     }
 
-    public String getRoomCode() {
-        return roomCodeTextView.getText().toString();
+    public String getEnteredCode() {
+        return enteredCode;
     }
+
+    public void setEnteredCode() {
+        String code = codeEditText.getText().toString();
+        this.enteredCode = code;
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        enterRoomButton.setEnabled(codeEditText.getText().length() > 0 &&
+                codeEditText.getText().length() > 0);
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
+
+    }
+
+
+    //    @Override
+//    public void onClick(View v) {
+//        switch (v.getId()){
+//            case R.id.cancelJoinButton:
+//        }
+//    }
 }

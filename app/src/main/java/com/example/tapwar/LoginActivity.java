@@ -38,13 +38,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private GoogleSignInClient mGoogleSignInClient;
     private static int RC_SIGN_IN = 100;
     private GoogleSignInOptions gso;
-    private TextView logOutButton ,randomButton,createRoomButton;
+    private TextView logOutButton ,joinRoomButton,createRoomButton;
     private AppCompatButton signInButton;
     private View view2;
     private WebSocket webSocket;
     private final String SERVER_PATH = "ws://192.168.0.108:3000";
 //            shubh : ""ws://192.168.0.108:3000"";
     private PopUpCreateRoomClass popUpCreateRoomClass;
+    private PopUpJoinRoomClass popUpJoinRoomClass;
     private GoogleSignInAccount googleSignInAccount;
     private UserDetail userDetail = new UserDetail();
     @Override
@@ -63,14 +64,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         logOutButton = findViewById(R.id.logOutButton);
-        randomButton = findViewById(R.id.randomButton);
+        joinRoomButton = findViewById(R.id.joinRoomButton);
         createRoomButton = findViewById(R.id.createRoomButton);
         signInButton = findViewById(R.id.signInButton);
         view2 = findViewById(R.id.view2);
         logOutButton.setOnClickListener(this);
         signInButton.setOnClickListener(this);
         createRoomButton.setOnClickListener(this);
-        randomButton.setOnClickListener(this);
+        joinRoomButton.setOnClickListener(this);
 
         initiateSocketConnection();
 
@@ -188,18 +189,44 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.createRoomButton:
                 createRoom(v);
                 break;
-            case R.id.randomButton:
-                randomPlay();
+            case R.id.joinRoomButton:
+                joinRoom(v);
                 break;
         }
     }
 
-    private void randomPlay() {
+    private void joinRoom(View v) {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if(account==null){
             signIn();
         }else{
-            Toast.makeText(this, "random generated", Toast.LENGTH_SHORT).show();
+            popUpJoinRoomClass = new PopUpJoinRoomClass() {
+                @Override
+                public void onPopup() {
+                    this.showPopupWindow(v,getParent());
+                }
+
+                @Override
+                public void onClick(View v) {
+                    switch (v.getId()){
+                        case R.id.cancelJoinButton:
+                            this.dismissPopup(v);
+                            break;
+                        case R.id.enterRoomButton:
+                            setEnteredCode();
+                            ServerResponseBody body = new ServerResponseBody(account.getEmail()
+                                    ,getEnteredCode()
+                                    ,ServerResponseBody.REQUEST_JOIN_GAME);
+
+                            webSocket.send(body.toJson());
+                            Toast.makeText(getApplicationContext(), body.toString(), Toast.LENGTH_LONG).show();
+                            break;
+                    }
+                }
+            };
+
+            popUpJoinRoomClass.onPopup();
+
         }
     }
 
@@ -212,7 +239,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 public void onClick(View view) {
                     if (view.getId() == R.id.shareButton) {
-                        String message = "Hey Welcome to Tap war \nTo join Out game Copy The Code : " + popUpCreateRoomClass.roomCodeTextView.getText().toString() ;
+                        String message = "Hey Welcome to Tap war \nTo join Out game Copy The Code : " + popUpCreateRoomClass.getRoomCode();
                         Intent i = new Intent();
                         i.setAction(Intent.ACTION_SEND);
                         i.setType("text/plain");

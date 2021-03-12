@@ -38,6 +38,7 @@
                     android:layout_margin="10dp"
                     android:textSize="16dp"
                     android:fontFamily="@font/fredoka_one"/>
+
                 <EditText
                     android:id="@+id/codeEditText"
                     android:layout_width="match_parent"
@@ -84,6 +85,7 @@
                   android:background="@drawable/generalbutton"
                   android:textSize="18dp"
                   android:text="ENTER ROOM"
+                  android:enabled="false"
                   android:paddingVertical="16dp"
                   android:shadowDx="1"
                   android:shadowDy="1"
