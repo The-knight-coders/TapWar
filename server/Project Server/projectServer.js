@@ -58,19 +58,19 @@ wsServer.on('request', (req) => {
                 'game_id': game_id
             }
             connection.sendUTF(JSON.stringify(message));
-            console.log(games);
+            console.log(games[game_id]);
         } else if (obj.type == "join_game") {
-            const req_game_id = obj.game_id;
+            const req_game_id = obj.game_id; 
 
             if (req_game_id in games) {
                 games[req_game_id].player_2 = get_connection_username(connection);
                 console.log(games);
 
-                connection.sendUTF("yes");
+                connection.sendUTF("yes, you are now in game room");
 
                 connections_map[games[req_game_id].player_1].sendUTF("User_is_connected");
             } else {
-                connection.sendUTF("no");
+                connection.sendUTF("no, wrong game room code");
             }
 
         } else {
