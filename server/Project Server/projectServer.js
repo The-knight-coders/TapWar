@@ -56,7 +56,9 @@ wsServer.on('request', (req) => {
             message.status = "Successfull";
             connection.sendUTF(JSON.stringify(message));
             console.log("login successfull : " + username);
-        } else if (obj.type == "create_game") {
+        } 
+        
+        else if (obj.type == "create_game") {
             var game_id = uniqid();
             games[game_id] = {
                 "game_id": game_id,
@@ -71,7 +73,9 @@ wsServer.on('request', (req) => {
             connection.sendUTF(JSON.stringify(message));
             console.log(games);
             console.log(message);
-        } else if (obj.type == "join_game") {
+        } 
+        
+        else if (obj.type == "join_game") {
             const req_game_id = obj.game_id;
             message.type = "Join room";
             if (req_game_id in games) {
@@ -90,7 +94,10 @@ wsServer.on('request', (req) => {
                 console.log('Room does not exists');
             }
 
-        } else if(obj.type == "cancel_game"){
+        } 
+        
+        
+        else if(obj.type == "cancel_game"){
             const req_game_id = obj.game_id;
             delete games[req_game_id];
             console.log("rooms been deleted : " + req_game_id);
