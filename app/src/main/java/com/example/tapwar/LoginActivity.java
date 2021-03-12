@@ -55,11 +55,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         loadUI();
         signIn();
+
     }
 
     private void loadUI() {
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestIdToken()
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
@@ -75,6 +75,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         randomButton.setOnClickListener(this);
 
         initiateSocketConnection();
+
     }
 
     @Override
@@ -82,6 +83,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onStart();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         updateUI(account);
+
     }
 
 
@@ -96,6 +98,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             logOutButton.setVisibility(View.GONE);
             view2.setVisibility(View.GONE);
         }
+
     }
 
 
@@ -103,6 +106,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
+
     }
 
     private void signOut(GoogleSignInOptions gso) {
@@ -112,13 +116,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-//                        finish();
                         signInButton.setVisibility(View.VISIBLE);
                         logOutButton.setVisibility(View.GONE);
                         view2.setVisibility(View.GONE);
                         Toast.makeText(LoginActivity.this, "Signout complete", Toast.LENGTH_SHORT).show();
                     }
                 });
+
     }
 
 
@@ -126,7 +130,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach
@@ -134,6 +137,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
         }
+
     }
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
@@ -158,6 +162,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
             // Signed in successfully, show authenticated UI.
             updateUI(account);
+
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
@@ -165,6 +170,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Log.w(TAG, "signInResult:failed code=" + e.getMessage());
             updateUI(null);
         }
+
     }
 
     @Override
@@ -201,33 +207,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }else{
             popUpClass = new PopUpClass() {
                 @Override
+                public void onClick(View view) {
+                    if (view.getId() == R.id.shareButton) {
+                        String message = "Hey Welcome to Tap war \nTo join Out game Copy The Code : " + popUpClass.roomCodeTextView.getText().toString() ;
+                        Intent i = new Intent();
+                        i.setAction(Intent.ACTION_SEND);
+                        i.setType("text/plain");
+
+                        i.putExtra(android.content.Intent.EXTRA_SUBJECT, "Joining Code");
+                        i.putExtra(android.content.Intent.EXTRA_TEXT, message);
+                        startActivity(Intent.createChooser(i,"Share"));
+                        //As an example, display the message
+                        Toast.makeText(getApplicationContext(), "Wow, share action button", Toast.LENGTH_SHORT).show();
+                    } else if (view.getId() == R.id.cancelRoomButton) {
+                        this.dismissPopup(v);
+                    }
+                }
+
+                @Override
                 public void onPopup() {
                     this.showPopupWindow(v,getParent());
                     ServerResponseBody body = new ServerResponseBody(account.getEmail(), null, ServerResponseBody.REQUEST_CREATE_GAME);
                     webSocket.send(body.toJson());
-
-                    shareButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            /**
-                             * After the code is generated we can simply pass the game code here
-                             */
-                            String message = "Hey Welcome to Tap war \nTo join Out game Copy The Code : " + popUpClass.roomCodeTextView.getText().toString() ;
-                            Intent i = new Intent();
-                            i.setAction(Intent.ACTION_SEND);
-                            i.setType("text/plain");
-
-                            i.putExtra(android.content.Intent.EXTRA_SUBJECT, "Joining Code");
-                            i.putExtra(android.content.Intent.EXTRA_TEXT, message);
-                            startActivity(Intent.createChooser(i,"Share"));
-
-                            //As an example, display the message
-                            Toast.makeText(getApplicationContext(), "Wow, share action button", Toast.LENGTH_SHORT).show();
-
-                        }
-                    });
-
                 }
             };
 
