@@ -46,6 +46,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private View view2;
     private WebSocket webSocket;
     private final String SERVER_PATH = "ws://192.168.1.6:3000";
+//            nir : "ws://192.168.1.6:3000";
     private PopUpClass popUpClass;
     private GoogleSignInAccount googleSignInAccount;
     private UserDetail userDetail = new UserDetail();
@@ -232,7 +233,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 public void onPopup() {
                     this.showPopupWindow(v,getParent());
-                    ServerResponseBody body = new ServerResponseBody(account.getEmail(), null, ServerResponseBody.REQUEST_CREATE_GAME);
+                    ServerResponseBody body = new ServerResponseBody(null, null, ServerResponseBody.REQUEST_CREATE_GAME);
                     webSocket.send(body.toJson());
                 }
             };
