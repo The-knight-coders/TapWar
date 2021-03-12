@@ -27,6 +27,8 @@ function get_connection_username(connection) {
     console.log("Not found username");
 }
 
+
+
 wsServer.on('request', (req) => {
     const connection = req.accept()
     console.log('new connection')
@@ -47,8 +49,9 @@ wsServer.on('request', (req) => {
             "game_status" : undefined  
         },
         "status" : undefined
-
+    
     }
+   
 
     connection.on('message', (mes) => {
 
@@ -83,20 +86,39 @@ wsServer.on('request', (req) => {
             console.log(message);
         } else if (obj.type == "join_game") {
             const req_game_id = obj.game_id;
-
+            message.type = "Join room";
             if (req_game_id in games) {
                 games[req_game_id].player_2 = get_connection_username(connection);
                 console.log(games);
-
-                connection.sendUTF("yes");
-
-                connections_map[games[req_game_id].player_1].sendUTF("User_is_connected");
+                message.game_info.game_id = req_game_id;
+                message.game_info.player_1_info.name = connections_map[games[req_game_id].player_1];
+                message.game_info.player_1_info.connection = "connected";
+                message.game_info.player_2_info.name = get_connection_username(connection);
+                message.game_info.player_2_info.connection = "connected";
+                
+                message.status = "Successful";
+                connection.sendUTF(JSON.stringify(message));
+                console.log("room joined");
+                console.log(message);
+                connections_map[games[req_game_id].player_1].sendUTF(JSON.stringify(message));
             } else {
-                connection.sendUTF("no");
+               
+                message.status = "wrong room code";
+                console.log('Room does not exists');
             }
 
-        } else {
-            console.log('No Request found');
+        } else if(obj.type == "cancel_game"){
+            const req_game_id = obj.game_id;
+            delete games[req_game_id];
+            console.log("rooms been deleted : " + req_game_id);
+            message.type = "Cancel room";
+            message.game_info.player_1_info.name = undefined;
+            message.game_info.player_1_info.connection = undefined;
+            message.game_info.game_id = undefined;
+            message.status = "canceled";
+            console.log('No room found');
+            connection.sendUTF(JSON.stringify(message));
+            console.log(games);
         }
 
     })

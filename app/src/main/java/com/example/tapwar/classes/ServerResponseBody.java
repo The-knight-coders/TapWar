@@ -13,10 +13,12 @@ public class ServerResponseBody {
 	public static final int REQUEST_LOGIN = 1;
 	public static final int REQUEST_CREATE_GAME = 2;
 	public static final int REQUEST_JOIN_GAME = 3;
+	public static final int REQUEST_CANCEL_GAME = 4;
 
 	public static final String LOGIN = "login";
 	public static final String JOIN_GAME = "join_game";
 	public static final String CREATE_GAME = "create_game";
+	public static final String CANCEL_GAME = "cancel_game";
 
 	private String user_name;
 	private String type;
@@ -34,8 +36,8 @@ public class ServerResponseBody {
 			this.type =  CREATE_GAME;
 		} else if (reqCode == REQUEST_JOIN_GAME) {
 			this.type =  JOIN_GAME;
-		} else {
-			this.type = null;
+		} else if(reqCode == REQUEST_CANCEL_GAME){
+			this.type = CANCEL_GAME;
 		}
 	}
 

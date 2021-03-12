@@ -250,6 +250,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         //As an example, display the message
                         Toast.makeText(getApplicationContext(), "Wow, share action button", Toast.LENGTH_SHORT).show();
                     } else if (view.getId() == R.id.cancelRoomButton) {
+                        ServerResponseBody body = new ServerResponseBody(account.getEmail(), popUpCreateRoomClass.getRoomCode(), ServerResponseBody.REQUEST_CANCEL_GAME);
+                        webSocket.send(body.toJson());
                         this.dismissPopup(v);
                     }
                 }
@@ -290,11 +292,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Log.d(TAG, "onMessage: " + text);
             try {
                 JSONObject jsonObject = new JSONObject(text);
-
+                String status = jsonObject.get("status").toString();
                 if(jsonObject.get("type").toString().equals("Create room") ){
-                     onCreateRoom(jsonObject);
-                }else if(jsonObject.get("type").toString().equals("Create room")){
-                    Log.d(TAG, "LOGIN SUCESSFULLY");
+                     onCreateRoom(jsonObject.getJSONObject("game_info"));
+                }else if(jsonObject.get("type").toString().equals("Login")){
+                    Log.d(TAG, "LOGIN SUCESSFULLY "  + status);
+                }else if(jsonObject.get("type").toString().equals("Cancel room")){
+                    Log.d(TAG, "You have leave the room : " + status);
+                }else if(jsonObject.get("type").toString().equals("Join room")){
+                    if(status == "Successful"){
+                        Log.d(TAG, "Room has been joined  : " + status);
+                    }else{
+                        Log.d(TAG, "Try again : " + status);
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -327,21 +337,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     //when response came back after create popup window
-    private void onCreateRoom(JSONObject jsonObject){
-        JSONObject gameInfo = null;
-        try {
-            gameInfo = jsonObject.getJSONObject("game_info");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    private void onCreateRoom(JSONObject gameInfo){
+
         if(gameInfo.has("game_id")){
             if (popUpCreateRoomClass != null) {
-                JSONObject finalGameInfo = gameInfo;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            popUpCreateRoomClass.setRoomCode( finalGameInfo.get("game_id").toString());
+                            popUpCreateRoomClass.setRoomCode( gameInfo.get("game_id").toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
