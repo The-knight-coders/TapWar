@@ -1,15 +1,15 @@
 package com.example.tapwar;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 
 import com.example.tapwar.classes.ServerResponseBody;
 import com.example.tapwar.classes.UserDetail;
@@ -20,14 +20,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.gson.JsonObject;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Base64;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -41,12 +38,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private GoogleSignInClient mGoogleSignInClient;
     private static int RC_SIGN_IN = 100;
     private GoogleSignInOptions gso;
-    private TextView logOutButton ,randomButton,createRoomButton;
+    private TextView logOutButton ,joinRoomButton,createRoomButton;
     private AppCompatButton signInButton;
     private View view2;
     private WebSocket webSocket;
-    private final String SERVER_PATH = "ws://192.168.1.6:3000";
-    private PopUpClass popUpClass;
+    private final String SERVER_PATH = "ws://192.168.0.108:3000";
+//            shubh : ""ws://192.168.0.108:3000"";
+    private PopUpCreateRoomClass popUpCreateRoomClass;
+    private PopUpJoinRoomClass popUpJoinRoomClass;
     private GoogleSignInAccount googleSignInAccount;
     private UserDetail userDetail = new UserDetail();
     @Override
@@ -55,26 +54,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         loadUI();
         signIn();
+
     }
 
     private void loadUI() {
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestIdToken()
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         logOutButton = findViewById(R.id.logOutButton);
-        randomButton = findViewById(R.id.randomButton);
+        joinRoomButton = findViewById(R.id.joinRoomButton);
         createRoomButton = findViewById(R.id.createRoomButton);
         signInButton = findViewById(R.id.signInButton);
         view2 = findViewById(R.id.view2);
         logOutButton.setOnClickListener(this);
         signInButton.setOnClickListener(this);
         createRoomButton.setOnClickListener(this);
-        randomButton.setOnClickListener(this);
+        joinRoomButton.setOnClickListener(this);
 
         initiateSocketConnection();
+
     }
 
     @Override
@@ -82,6 +82,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onStart();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         updateUI(account);
+
     }
 
 
@@ -96,6 +97,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             logOutButton.setVisibility(View.GONE);
             view2.setVisibility(View.GONE);
         }
+
     }
 
 
@@ -103,6 +105,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
+
     }
 
     private void signOut(GoogleSignInOptions gso) {
@@ -112,13 +115,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-//                        finish();
                         signInButton.setVisibility(View.VISIBLE);
                         logOutButton.setVisibility(View.GONE);
                         view2.setVisibility(View.GONE);
+
+                        if (webSocket != null) {
+                            // todo implement logout
+                        }
                         Toast.makeText(LoginActivity.this, "Signout complete", Toast.LENGTH_SHORT).show();
                     }
                 });
+
     }
 
 
@@ -126,7 +133,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach
@@ -134,6 +140,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
         }
+
     }
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
@@ -151,6 +158,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 logOutButton.setVisibility(View.VISIBLE);
                 view2.setVisibility(View.VISIBLE);
 
+                loginToServer();
 //                initiateSocketConnection();
 
             } else {
@@ -158,6 +166,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
             // Signed in successfully, show authenticated UI.
             updateUI(account);
+
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
@@ -165,6 +174,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Log.w(TAG, "signInResult:failed code=" + e.getMessage());
             updateUI(null);
         }
+
     }
 
     @Override
@@ -179,18 +189,44 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.createRoomButton:
                 createRoom(v);
                 break;
-            case R.id.randomButton:
-                randomPlay();
+            case R.id.joinRoomButton:
+                joinRoom(v);
                 break;
         }
     }
 
-    private void randomPlay() {
+    private void joinRoom(View v) {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if(account==null){
             signIn();
         }else{
-            Toast.makeText(this, "random generated", Toast.LENGTH_SHORT).show();
+            popUpJoinRoomClass = new PopUpJoinRoomClass() {
+                @Override
+                public void onPopup() {
+                    this.showPopupWindow(v,getParent());
+                }
+
+                @Override
+                public void onClick(View v) {
+                    switch (v.getId()){
+                        case R.id.cancelJoinButton:
+                            this.dismissPopup(v);
+                            break;
+                        case R.id.enterRoomButton:
+                            setEnteredCode();
+                            ServerResponseBody body = new ServerResponseBody(account.getEmail()
+                                    ,getEnteredCode()
+                                    ,ServerResponseBody.REQUEST_JOIN_GAME);
+
+                            webSocket.send(body.toJson());
+                            Toast.makeText(getApplicationContext(), body.toString(), Toast.LENGTH_LONG).show();
+                            break;
+                    }
+                }
+            };
+
+            popUpJoinRoomClass.onPopup();
+
         }
     }
 
@@ -199,39 +235,36 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(account==null){
             signIn();
         }else{
-            popUpClass = new PopUpClass() {
+            popUpCreateRoomClass = new PopUpCreateRoomClass() {
+                @Override
+                public void onClick(View view) {
+                    if (view.getId() == R.id.shareButton) {
+                        String message = "Hey Welcome to Tap war \nTo join Out game Copy The Code : " + popUpCreateRoomClass.getRoomCode();
+                        Intent i = new Intent();
+                        i.setAction(Intent.ACTION_SEND);
+                        i.setType("text/plain");
+
+                        i.putExtra(android.content.Intent.EXTRA_SUBJECT, "Joining Code");
+                        i.putExtra(android.content.Intent.EXTRA_TEXT, message);
+                        startActivity(Intent.createChooser(i,"Share"));
+                        //As an example, display the message
+                        Toast.makeText(getApplicationContext(), "Wow, share action button", Toast.LENGTH_SHORT).show();
+                    } else if (view.getId() == R.id.cancelRoomButton) {
+                        ServerResponseBody body = new ServerResponseBody(account.getEmail(), popUpCreateRoomClass.getRoomCode(), ServerResponseBody.REQUEST_CANCEL_GAME);
+                        webSocket.send(body.toJson());
+                        this.dismissPopup(v);
+                    }
+                }
+
                 @Override
                 public void onPopup() {
                     this.showPopupWindow(v,getParent());
-                    ServerResponseBody body = new ServerResponseBody(account.getEmail(), null, ServerResponseBody.REQUEST_CREATE_GAME);
+                    ServerResponseBody body = new ServerResponseBody(null, null, ServerResponseBody.REQUEST_CREATE_GAME);
                     webSocket.send(body.toJson());
-
-                    shareButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            /**
-                             * After the code is generated we can simply pass the game code here
-                             */
-                            String message = "Hey Welcome to Tap war \nTo join Out game Copy The Code : " + popUpClass.roomCodeTextView.getText().toString() ;
-                            Intent i = new Intent();
-                            i.setAction(Intent.ACTION_SEND);
-                            i.setType("text/plain");
-
-                            i.putExtra(android.content.Intent.EXTRA_SUBJECT, "Joining Code");
-                            i.putExtra(android.content.Intent.EXTRA_TEXT, message);
-                            startActivity(Intent.createChooser(i,"Share"));
-
-                            //As an example, display the message
-                            Toast.makeText(getApplicationContext(), "Wow, share action button", Toast.LENGTH_SHORT).show();
-
-                        }
-                    });
-
                 }
             };
 
-            popUpClass.onPopup();
+            popUpCreateRoomClass.onPopup();
         }
     }
 
@@ -240,7 +273,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Request request = new Request.Builder().url(SERVER_PATH).build();
         webSocket = client.newWebSocket(request,new SocketListner());
 
-        loginToServer();
+//        loginToServer();
     }
 
     private void loginToServer() {
@@ -257,17 +290,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
             super.onMessage(webSocket, text);
             Log.d(TAG, "onMessage: " + text);
-
             try {
                 JSONObject jsonObject = new JSONObject(text);
-                if (jsonObject.has("game_id")) {
-                    if (popUpClass != null) {
-                        popUpClass.setRoomCode(jsonObject.get("game_id").toString());
-                    } else {
-                        Log.d(TAG, "onMessage: It is null " );
+                String status = jsonObject.get("status").toString();
+                if(jsonObject.get("type").toString().equals("Create room") ){
+                     onCreateRoom(jsonObject.getJSONObject("game"));
+                }else if(jsonObject.get("type").toString().equals("Login")){
+                    Log.d(TAG, "LOGIN SUCESSFULLY "  + status);
+                }else if(jsonObject.get("type").toString().equals("Cancel room")){
+                    Log.d(TAG, "You have leave the room : " + status);
+                }else if(jsonObject.get("type").toString().equals("Join room")){
+                    if(status == "Successful"){
+                        Log.d(TAG, "Room has been joined  : " + status);
+                    }else{
+                        Log.d(TAG, "Try again : " + status);
                     }
-                } else {
-                    Log.d(TAG, "onMessage: Not present");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -296,6 +333,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         public void onFailure(@NotNull WebSocket webSocket, @NotNull Throwable t, @Nullable Response response) {
             super.onFailure(webSocket, t, response);
             Log.d(TAG, "onFailure: " + t.getMessage());
+        }
+    }
+
+    //when response came back after create popup window
+    private void onCreateRoom(JSONObject game){
+
+        if(game.has("game_id")){
+            if (popUpCreateRoomClass != null) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            popUpCreateRoomClass.setRoomCode( game.get("game_id").toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        // Stuff that updates the UI
+
+                    }
+                });
+
+            } else {
+                Log.d(TAG, "onMessage: It is null " );
+            }
         }
     }
 }

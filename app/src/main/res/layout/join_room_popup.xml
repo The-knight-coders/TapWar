@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:gravity="center"
+    android:fitsSystemWindows="true"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        app:cardCornerRadius="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:id="@+id/codeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/generalbutton"
+
+                android:padding="10dp"
+                android:orientation="vertical"
+                android:layout_margin="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ENTER ROOM CODE"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:textSize="16dp"
+                    android:fontFamily="@font/fredoka_one"/>
+
+                <EditText
+                    android:id="@+id/codeEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Room Code"
+                    android:textColorHint="#E17A8E79"
+                    android:layout_marginHorizontal="20dp"
+                    android:textSize="30dp"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:textColor="@color/text_color"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/generalbutton"
+                    android:backgroundTint="@color/white"
+                    android:fontFamily="@font/fredoka_one"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginHorizontal="30dp"
+                android:textSize="16dp"
+                android:fontFamily="@font/fredoka_one"
+                android:layout_below="@+id/codeLayout"
+                android:text="Enter the room by typing the room code shared by your friend and compete."/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:orientation="vertical"
+                android:layout_below="@+id/info"
+                android:layout_marginTop="20dp">
+
+              <androidx.appcompat.widget.AppCompatButton
+                  android:id="@+id/enterRoomButton"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="center"
+                  android:layout_marginHorizontal="40dp"
+                  android:background="@drawable/generalbutton"
+                  android:textSize="18dp"
+                  android:text="ENTER ROOM"
+                  android:enabled="false"
+                  android:paddingVertical="16dp"
+                  android:shadowDx="1"
+                  android:shadowDy="1"
+                  android:fontFamily="@font/fredoka_one"
+                  android:textColor="@color/text_color"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/cancelJoinButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="40dp"
+                    android:layout_marginVertical="14dp"
+                    android:background="@drawable/generalbutton"
+                    android:textSize="18dp"
+                    android:text="cancel "
+                    android:paddingVertical="16dp"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:fontFamily="@font/fredoka_one"
+                    android:textColor="@color/text_color"/>
+
+            </LinearLayout>
+        </RelativeLayout>
+
+
+
+
+
+    </androidx.cardview.widget.CardView>
+</LinearLayout>
