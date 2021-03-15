@@ -10,6 +10,7 @@ const server = http.createServer((req, res) => {
 
 })
 var port = process.env.PORT || 3000;
+
 server.listen(port, () => {
     console.log("Listening on port " + port + "...")
 })
@@ -35,12 +36,12 @@ wsServer.on('request', (req) => {
 
     // connections_map[username] = (connection)
     let message = {
-        "type" : undefined,
-        "game" : undefined,
-        "status" : undefined
-    
+        "type": undefined,
+        "game": undefined,
+        "status": undefined
+
     }
-   
+
 
     connection.on('message', (mes) => {
 
@@ -56,9 +57,7 @@ wsServer.on('request', (req) => {
             message.status = "Successfull";
             connection.sendUTF(JSON.stringify(message));
             console.log("login successfull : " + username);
-        } 
-        
-        else if (obj.type == "create_game") {
+        } else if (obj.type == "create_game") {
             var game_id = uniqid();
             games[game_id] = {
                 "game_id": game_id,
@@ -73,9 +72,7 @@ wsServer.on('request', (req) => {
             connection.sendUTF(JSON.stringify(message));
             console.log(games);
             console.log(message);
-        } 
-        
-        else if (obj.type == "join_game") {
+        } else if (obj.type == "join_game") {
             const req_game_id = obj.game_id;
             message.type = "Join room";
             if (req_game_id in games) {
@@ -88,16 +85,13 @@ wsServer.on('request', (req) => {
                 console.log(message);
                 connections_map[games[req_game_id].player_1].sendUTF(JSON.stringify(message));
             } else {
-               
+
                 message.status = "wrong room code";
                 connection.sendUTF(JSON.stringify(message));
                 console.log('Room does not exists');
             }
 
-        } 
-        
-        
-        else if(obj.type == "cancel_game"){
+        } else if (obj.type == "cancel_game") {
             const req_game_id = obj.game_id;
             delete games[req_game_id];
             console.log("rooms been deleted : " + req_game_id);
