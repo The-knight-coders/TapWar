@@ -1,4 +1,4 @@
-package com.example.tapwar.classes;
+package com.example.tapwar.model;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
