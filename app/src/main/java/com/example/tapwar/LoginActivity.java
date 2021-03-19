@@ -11,8 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
-import com.example.tapwar.model.ServerResponseBody;
-import com.example.tapwar.model.UserDetail;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -42,9 +40,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private AppCompatButton signInButton;
     private View view2;
     private WebSocket webSocket;
-    private final String SERVER_PATH = "ws://192.168.1.6:3000";
+    private final String SERVER_PATH = "ws://192.168.0.108:3000";
 //            shubh : ""ws://192.168.0.108:3000"";
-//    nir : "ws://192.168.1.6:3000"
     private PopUpCreateRoomClass popUpCreateRoomClass;
     private PopUpJoinRoomClass popUpJoinRoomClass;
     private GoogleSignInAccount googleSignInAccount;

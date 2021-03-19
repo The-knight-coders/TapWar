@@ -1,4 +1,4 @@
-package com.example.tapwar.model;
+package com.example.tapwar;
 
 import android.content.Context;
 import android.os.Build;

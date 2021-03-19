@@ -1,22 +1,11 @@
 package com.example.tapwar;
 
 import android.content.Context;
-import android.os.Build;
-import android.text.Layout;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.Nullable;
-
-import com.example.tapwar.model.PopUpAb;
 
 
 public abstract class PopUpCreateRoomClass extends PopUpAb implements View.OnClickListener {
