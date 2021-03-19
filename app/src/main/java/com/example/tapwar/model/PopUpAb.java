@@ -22,10 +22,29 @@ public abstract class PopUpAb {
 	protected void showPopupWindow(final View view, Context c ) {
 
 	}
+
+	public void showPopupWindow(Context c, @Nullable int layoutResId) {
+		LayoutInflater inflater = (LayoutInflater) c.getApplicationContext().getSystemService(c.LAYOUT_INFLATER_SERVICE);
+		initializePopupWindow(inflater,layoutResId);
+	}
+
+	protected void initializePopupWindow(LayoutInflater inflater,int layoutResId){
+		View popupView = inflater.inflate(layoutResId, null);
+		popupView.setFitsSystemWindows(true);
+		//Specify the length and width through constants
+		int width = LinearLayout.LayoutParams.MATCH_PARENT;
+		int height = LinearLayout.LayoutParams.MATCH_PARENT;
+		//Make Inactive Items Outside Of PopupWindow
+		boolean focusable = true;
+		//Create a window with our parameters
+		popupWindow = new PopupWindow(popupView, width, height, focusable);
+		//Set the location of the window on the screen
+		initializeUI(popupView);
+	}
+
 	public void showPopupWindow(final View view, Context c,@Nullable int layoutResId){
 
 		LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
-
 		View popupView = inflater.inflate(layoutResId, null);
 		popupView.setFitsSystemWindows(true);
 		//Specify the length and width through constants
@@ -38,7 +57,10 @@ public abstract class PopUpAb {
 		//Set the location of the window on the screen
 		initializeUI(popupView,view);
 	}
-	protected abstract void initializeUI(View popupView, View parentView);
+
+	protected abstract void initializeUI(View popupView);
+
+	protected abstract void initializeUI(View popupView, @Nullable View parentView);
 
 	protected void dismissPopup(View v){
 		popupWindow.dismiss();
