@@ -35,6 +35,8 @@ public abstract class PopUpJoinRoomClass extends PopUpAb implements View.OnClick
         codeEditText.addTextChangedListener(this);
     }
 
+
+
     public String getEnteredCode() {
         return enteredCode;
     }

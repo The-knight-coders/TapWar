@@ -33,6 +33,8 @@ public abstract class PopUpCreateRoomClass extends PopUpAb implements View.OnCli
 
     }
 
+
+
     public void setRoomCode(String roomcode) {
         Log.d("POPUP", "setRoomCode: " + roomcode);
         roomCodeTextView.setText(roomcode);

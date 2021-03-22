@@ -298,8 +298,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }else if(jsonObject.get("type").toString().equals("Cancel room")){
                     Log.d(TAG, "You have leave the room : " + status);
                 }else if(jsonObject.get("type").toString().equals("Join room")){
-                    if(status == "Successful"){
+                    if(status.equals("Successful") ){
                         Log.d(TAG, "Room has been joined  : " + status);
+//                        popUpCreateRoomClass.dismissPopup(vi);
+                        Intent i = new Intent(getApplicationContext(), GameScreen.class);
+                        startActivity(i);
+
                     }else{
                         Log.d(TAG, "Try again : " + status);
                     }

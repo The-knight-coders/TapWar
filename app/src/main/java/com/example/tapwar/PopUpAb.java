@@ -11,11 +11,10 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.example.tapwar.R;
-
 public abstract class PopUpAb {
 
 	protected PopupWindow popupWindow;
+
 
 	public abstract void onPopup();
 
@@ -39,7 +38,7 @@ public abstract class PopUpAb {
 		//Create a window with our parameters
 		popupWindow = new PopupWindow(popupView, width, height, focusable);
 		//Set the location of the window on the screen
-		initializeUI(popupView);
+		initializeUI(popupView, (View) popupWindow.getContentView().getParent().getParent());
 	}
 
 	public void showPopupWindow(final View view, Context c,@Nullable int layoutResId){
@@ -58,7 +57,7 @@ public abstract class PopUpAb {
 		initializeUI(popupView,view);
 	}
 
-	protected abstract void initializeUI(View popupView);
+//	protected abstract void initializeUI(View popupView);
 
 	protected abstract void initializeUI(View popupView, @Nullable View parentView);
 
